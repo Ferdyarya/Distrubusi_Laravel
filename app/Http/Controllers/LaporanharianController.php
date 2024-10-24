@@ -12,22 +12,27 @@ use Illuminate\Support\Facades\Auth;
 class LaporanharianController extends Controller
 {
     public function index(Request $request)
-    {
-        if($request->has('search')){
-            $laporanharian = Laporanharian::where('area', 'LIKE', '%' .$request->search.'%')->paginate(10);
-        }else{
-
-        if( Auth::user()->roles == 'sales'){
-            $laporanharian = Laporanharian::where('id_sales', Auth::id())->paginate(10);
-        }else{
-            $laporanharian = Laporanharian::paginate(10);
+{
+    if ($request->has('search')) {
+        $laporanharian = Laporanharian::where('area', 'LIKE', '%' . $request->search . '%')
+            ->orderBy('created_at', 'desc') // Menambahkan pengurutan berdasarkan created_at
+            ->paginate(10);
+    } else {
+        if (Auth::user()->roles == 'sales') {
+            $laporanharian = Laporanharian::where('id_sales', Auth::id())
+                ->orderBy('created_at', 'desc') // Menambahkan pengurutan
+                ->paginate(10);
+        } else {
+            $laporanharian = Laporanharian::orderBy('created_at', 'desc') // Menambahkan pengurutan
+                ->paginate(10);
         }
-        }
-        // return Auth::user()->roles;
-        return view('laporanharian.index',[
-            'laporanharian' => $laporanharian,
-        ]);
     }
+
+    return view('laporanharian.index', [
+        'laporanharian' => $laporanharian,
+    ]);
+}
+
 
     /**
      * Show the form for creating a new resource.

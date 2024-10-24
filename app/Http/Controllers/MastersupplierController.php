@@ -8,16 +8,21 @@ use App\Models\Mastersupplier;
 class MastersupplierController extends Controller
 {
     public function index(Request $request)
-    {
-        if($request->has('search')){
-            $mastersupplier = Mastersupplier::where('name', 'LIKE', '%' .$request->search.'%')->paginate(10);
-        }else{
-            $mastersupplier = Mastersupplier::paginate(10);
-        }
-        return view('mastersupplier.index',[
-            'mastersupplier' => $mastersupplier
-        ]);
+{
+    if ($request->has('search')) {
+        $mastersupplier = Mastersupplier::where('name', 'LIKE', '%' . $request->search . '%')
+            ->orderBy('created_at', 'desc') // Menambahkan pengurutan berdasarkan created_at
+            ->paginate(10);
+    } else {
+        $mastersupplier = Mastersupplier::orderBy('created_at', 'desc') // Menambahkan pengurutan
+            ->paginate(10);
     }
+
+    return view('mastersupplier.index', [
+        'mastersupplier' => $mastersupplier
+    ]);
+}
+
 
     /**
      * Show the form for creating a new resource.

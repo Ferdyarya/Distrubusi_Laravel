@@ -11,22 +11,26 @@ use Illuminate\Support\Facades\Auth;
 class BrgmasukController extends Controller
 {
     public function index(Request $request)
-    {
-        if($request->has('search')){
-            $brgmasuk = Brgmasuk::where('namabarang', 'LIKE', '%' .$request->search.'%')->paginate(10);
-        }else{
-
-        if( Auth::user()->roles == 'sales'){
-            $brgmasuk = Brgmasuk::where('id_sales', Auth::id())->paginate(10);
-        }else{
-            $brgmasuk = Brgmasuk::paginate(10);
+{
+    if ($request->has('search')) {
+        $brgmasuk = Brgmasuk::where('namabarang', 'LIKE', '%' . $request->search . '%')
+            ->orderBy('created_at', 'desc') // Menambahkan pengurutan berdasarkan created_at
+            ->paginate(10);
+    } else {
+        if (Auth::user()->roles == 'sales') {
+            $brgmasuk = Brgmasuk::where('id_sales', Auth::id())
+                ->orderBy('created_at', 'desc') // Menambahkan pengurutan
+                ->paginate(10);
+        } else {
+            $brgmasuk = Brgmasuk::orderBy('created_at', 'desc') // Menambahkan pengurutan
+                ->paginate(10);
         }
-        }
-        // return Auth::user()->roles;
-        return view('brgmasuk.index',[
-            'brgmasuk' => $brgmasuk,
-        ]);
     }
+
+    return view('brgmasuk.index', [
+        'brgmasuk' => $brgmasuk,
+    ]);
+}
 
     /**
      * Show the form for creating a new resource.

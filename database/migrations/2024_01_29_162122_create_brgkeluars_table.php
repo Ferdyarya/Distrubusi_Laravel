@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('statuskirim')->nullable();
             $table->string('bukti')->nullable();
             $table->date('tanggal');
-            $table->date('updatekirim');
+            $table->date('updatekirim')->nullable();
             $table->integer('id_sales');
             $table->timestamps();
             $table->softDeletes();

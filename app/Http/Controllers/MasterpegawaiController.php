@@ -10,16 +10,21 @@ class MasterpegawaiController extends Controller
 {
     // NEW
     public function index(Request $request)
-    {
-        if($request->has('search')){
-            $masterpegawai = Masterpegawai::where('nama', 'LIKE', '%' .$request->search.'%')->paginate(10);
-        }else{
-            $masterpegawai = Masterpegawai::paginate(10);
-        }
-        return view('masterpegawai.index',[
-            'masterpegawai' => $masterpegawai
-        ]);
+{
+    if ($request->has('search')) {
+        $masterpegawai = Masterpegawai::where('nama', 'LIKE', '%' . $request->search . '%')
+            ->orderBy('created_at', 'desc') // Menambahkan pengurutan berdasarkan created_at
+            ->paginate(10);
+    } else {
+        $masterpegawai = Masterpegawai::orderBy('created_at', 'desc') // Menambahkan pengurutan
+            ->paginate(10);
     }
+
+    return view('masterpegawai.index', [
+        'masterpegawai' => $masterpegawai
+    ]);
+}
+
 
     /**
      * Show the form for creating a new resource.

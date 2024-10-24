@@ -10,15 +10,20 @@ class MastertokoController extends Controller
     // NEW
     public function index(Request $request)
     {
-        if($request->has('search')){
-            $mastertoko = Mastertoko::where('name', 'LIKE', '%' .$request->search.'%')->paginate(10);
-        }else{
-            $mastertoko = Mastertoko::paginate(10);
+        if ($request->has('search')) {
+            $mastertoko = Mastertoko::where('name', 'LIKE', '%' . $request->search . '%')
+                ->orderBy('created_at', 'desc') // Menambahkan pengurutan berdasarkan created_at
+                ->paginate(10);
+        } else {
+            $mastertoko = Mastertoko::orderBy('created_at', 'desc') // Menambahkan pengurutan
+                ->paginate(10);
         }
-        return view('mastertoko.index',[
+
+        return view('mastertoko.index', [
             'mastertoko' => $mastertoko
         ]);
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -44,7 +49,7 @@ class MastertokoController extends Controller
     ], [
         'namatoko.unique' => 'Nama Toko sudah ada. Silakan gunakan nama lain.',
     ]);
-    
+
     $data = $request->all();
 
     // Generate a new unique code with prefix "MA"

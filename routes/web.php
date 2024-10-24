@@ -1,6 +1,8 @@
 <?php
 
+use App\Models\User;
 use App\Models\Brgmasuk;
+use App\Models\Brgretur;
 use App\Models\Brgkeluar;
 use App\Models\Mastertoko;
 use App\Models\Masterbarang;
@@ -34,11 +36,51 @@ use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 */
 
 Route::get('/', function () {
-    $jumlahsales = Masterpegawai::count();
+    $dateNow = new \DateTime();
+    $jumlahsales = User::where('roles', 'sales')->count();
     $jumlahbahan = Brgmasuk::count();
+    $outletterdaftar = Pendafoutlite::count();
     $orderan = Brgkeluar::count();
     $jumlahtoko = Mastertoko::count();
-    return view('dashboard', compact('jumlahsales','jumlahbahan','orderan','jumlahtoko'));
+    $jumlahsupplier = Mastersupplier::count();
+    $jumlahbarangmasuk = Brgmasuk::count();
+    $jumlahbaranretur = Brgretur::count();
+    $laporanharianjumlah = Laporanharian::count();
+
+    // Fetching monthly order data
+    $orderMonth1 = Brgkeluar::whereMonth('created_at', now()->subMonths(1)->month)
+                              ->whereYear('created_at', now()->subMonths(1)->year)
+                              ->count();
+    $orderMonth2 = Brgkeluar::whereMonth('created_at', now()->subMonths(2)->month)
+                              ->whereYear('created_at', now()->subMonths(2)->year)
+                              ->count();
+    $orderMonth3 = Brgkeluar::whereMonth('created_at', now()->subMonths(3)->month)
+                              ->whereYear('created_at', now()->subMonths(3)->year)
+                              ->count();
+    $orderMonth4 = Brgkeluar::whereMonth('created_at', now()->subMonths(4)->month)
+                              ->whereYear('created_at', now()->subMonths(4)->year)
+                              ->count();
+    $orderMonth5 = Brgkeluar::whereMonth('created_at', now()->subMonths(5)->month)
+                              ->whereYear('created_at', now()->subMonths(5)->year)
+                              ->count();
+
+    return view('dashboard', compact(
+        'jumlahsales',
+        'jumlahbahan',
+        'orderan',
+        'jumlahtoko',
+        'dateNow',
+        'outletterdaftar',
+        'jumlahsupplier',
+        'jumlahbarangmasuk',
+        'jumlahbaranretur',
+        'laporanharianjumlah',
+        'orderMonth1',
+        'orderMonth2',
+        'orderMonth3',
+        'orderMonth4',
+        'orderMonth5'
+    ));
 })->middleware('auth');
 
 

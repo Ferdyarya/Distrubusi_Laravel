@@ -17,16 +17,12 @@ use Illuminate\Support\Facades\Auth;
 class BrgkeluarController extends Controller
 {
     public function index(Request $request)
-    {
-        if($request->has('search')){
-            $brgkeluar = Brgkeluar::where('nopembelian', 'LIKE', '%' .$request->search.'%')->paginate(10);
-        }else{
-
-        /* if( Auth::user()->roles == 'sales'){
-            $brgkeluar = Brgkeluar::where('id_sales', Auth::id())->paginate(10);
-        }else{
-            $brgkeluar = Brgkeluar::paginate(10);
-        } */
+{
+    if ($request->has('search')) {
+        $brgkeluar = Brgkeluar::where('nopembelian', 'LIKE', '%' . $request->search . '%')
+            ->orderBy('created_at', 'desc') // Menambahkan pengurutan berdasarkan created_at
+            ->paginate(10);
+    } else {
         if (Auth::user()->roles == 'sales') {
             $brgkeluar = Brgkeluar::where('id_sales', Auth::id())
                 ->join('orderans', 'brgkeluars.id', '=', 'orderans.id_pembelian')
@@ -34,22 +30,24 @@ class BrgkeluarController extends Controller
                 ->select('brgkeluars.*',
                          DB::raw('SUM(orderans.qty * brgmasuks.hargabarang) as total_harga'))
                 ->groupBy('brgkeluars.id') // Group by primary key or relevant identifier
+                ->orderBy('brgkeluars.created_at', 'desc') // Menambahkan pengurutan
                 ->paginate(10);
         } else {
-            // Query for non-sales role
             $brgkeluar = Brgkeluar::join('orderans', 'brgkeluars.id', '=', 'orderans.id_pembelian')
                 ->join('brgmasuks', 'orderans.id_barang_keluar', '=', 'brgmasuks.id')
                 ->select('brgkeluars.*',
                          DB::raw('SUM(orderans.qty * brgmasuks.hargabarang) as total_harga'))
                 ->groupBy('brgkeluars.id') // Group by primary key or relevant identifier
+                ->orderBy('brgkeluars.created_at', 'desc') // Menambahkan pengurutan
                 ->paginate(10);
         }
-        }
-        // return Auth::user()->roles;
-        return view('brgkeluar.index',[
-            'brgkeluar' => $brgkeluar,
-        ]);
     }
+
+    return view('brgkeluar.index', [
+        'brgkeluar' => $brgkeluar,
+    ]);
+}
+
 
 
     /**

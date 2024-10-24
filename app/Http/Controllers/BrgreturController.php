@@ -12,17 +12,21 @@ use PDF;
 class BrgreturController extends Controller
 {
     public function index(Request $request)
-    {
-        $brgretur = Brgretur::query();
-        if ($request->has('search')) {
-            $brgretur = Brgretur::join('brgmasuks', 'brgmasuks.id', '=', 'brgmasuks.id_barang')
-                ->where('brgmasuks.namabarang', 'LIKE', '%' . $request->search . '%')
-                ->paginate(10);
-        } else {
-            $brgretur = $brgretur->paginate(10);
-        }
-        return view('brgretur.index', ['brgretur' => $brgretur]);
+{
+    $brgretur = Brgretur::query();
+
+    if ($request->has('search')) {
+        $brgretur = Brgretur::join('brgmasuks', 'brgmasuks.id', '=', 'brgreturs.id_barang') // Pastikan 'brgreturs.id_barang' sesuai
+            ->where('brgmasuks.namabarang', 'LIKE', '%' . $request->search . '%')
+            ->orderBy('brgreturs.created_at', 'desc') // Menambahkan pengurutan berdasarkan created_at
+            ->paginate(10);
+    } else {
+        $brgretur = $brgretur->orderBy('created_at', 'desc') // Menambahkan pengurutan untuk semua data
+            ->paginate(10);
     }
+
+    return view('brgretur.index', ['brgretur' => $brgretur]);
+}
 
     /**
      * Show the form for creating a new resource.
